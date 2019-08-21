@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import { RepositoryItem } from '../.';
+import { FetchMore } from '../../FetchMore';
 
 const updateQuery = (previousResult, { fetchMoreResult }) => {
   if (!fetchMoreResult) return previousResult;
@@ -20,26 +21,24 @@ const updateQuery = (previousResult, { fetchMoreResult }) => {
   };
 }
 
-const RepositoryList = ({ repositories, fetchMore }) => (
+const RepositoryList = ({ repositories, loading, fetchMore }) => (
   <Fragment>
     {repositories.edges.map(({ node }) => (
       <div key={node.id} className={'RepositoryItem'}>
         <RepositoryItem {...node} />
       </div>
     ))}
-    {repositories.pageInfo.hasNextPage && (
-      <button
-        type='button'
-        onClick={() => fetchMore({
-          variables: {
-            cursor: repositories.pageInfo.endCursor,
-          },
-          updateQuery,
-        })}
-      >
-        More Repositories
-      </button>
-    )}
+    <FetchMore
+      loading={loading}
+      hasNextPage={repositories.pageInfo.hasNextPage}
+      variables={{
+        cursor: repositories.pageInfo.endCursor
+      }}
+      updateQuery={updateQuery}
+      fetchMore={fetchMore}
+    >
+      Repositories
+    </FetchMore>
   </Fragment>
 );
 
